@@ -10,6 +10,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
+import { BoardModule } from './board/board.module';
 
 @Module({
   imports: [
@@ -49,12 +50,11 @@ import { APP_FILTER } from '@nestjs/core';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
       context: ({ req }) => ({ req }),
+      debug: false,
       cors: {
         credentials: true,
         origin: true,
       },
-      fieldResolverEnhancers: ['filters'],
-      debug: false
     }),
     MailerModule.forRootAsync({
       useFactory: () => ({
@@ -81,6 +81,7 @@ import { APP_FILTER } from '@nestjs/core';
     }),
     CommonModule,
     AuthModule,
+    BoardModule,
   ],
   controllers: [],
   providers: [

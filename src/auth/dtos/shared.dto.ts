@@ -4,4 +4,3 @@ import { User } from '../entities/user.entitiy';
 
 @ObjectType()
 export class UserOutput extends MutationOutput(User) {}
-
