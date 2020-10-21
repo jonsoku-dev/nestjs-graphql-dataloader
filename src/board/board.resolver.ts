@@ -104,7 +104,7 @@ export class BoardResolver {
 
   @ResolveField('user', (returns) => User)
   async boardUser(@Parent() board: Board) {
-    return this.authService.findOneById(board.userId);
+      return this.authService.findOneById(board.userId);
   }
 
   @ResolveField('likes', (returns) => [Like])
@@ -117,3 +117,28 @@ export class BoardResolver {
     return this.boardService.findCommentsByBoard(board.id);
   }
 }
+
+@Resolver(() => Comment)
+export class CommentResolver {
+  constructor(
+    private readonly authService: AuthService,
+  ) {}
+
+  @ResolveField('user', (returns) => User)
+  async commentUser(@Parent() comment: Comment) {
+    return this.authService.findOneById(comment.userId);
+  }
+}
+
+@Resolver(() => Like)
+export class LikeResolver {
+  constructor(
+    private readonly authService: AuthService,
+  ) {}
+
+  @ResolveField('user', (returns) => User)
+  async likeUser(@Parent() like: Like) {
+    return this.authService.findOneById(like.userId);
+  }
+}
+

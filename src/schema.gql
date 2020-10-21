@@ -12,7 +12,7 @@ type Board {
   title: String!
   updatedAt: DateTime!
   user: User!
-  userId: Float!
+  userId: Int!
 }
 
 enum BoardCategory {
@@ -34,11 +34,14 @@ type BoardPageInfo {
 }
 
 type Comment {
+  board: Board!
+  boardId: Int!
   body: String!
   createdAt: DateTime!
   id: Float!
   updatedAt: DateTime!
   user: User!
+  userId: Int!
 }
 
 input CreateBoardCommentInput {
@@ -80,12 +83,12 @@ type GetBoardListOutput {
 
 type Like {
   board: Board!
-  boardId: Float!
+  boardId: Int!
   createdAt: DateTime!
   id: ID!
   updatedAt: DateTime!
   user: User!
-  userId: Float!
+  userId: Int!
 }
 
 input LoginInput {

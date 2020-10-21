@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { BoardService } from './board.service';
-import { BoardResolver } from './board.resolver';
+import { BoardResolver, CommentResolver, LikeResolver } from './board.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
 import { AuthModule } from '../auth/auth.module';
@@ -10,6 +10,6 @@ import { Comment } from './entities/comment.entitiy';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Board, User, Like, Comment]), AuthModule],
-  providers: [BoardService, BoardResolver],
+  providers: [BoardService, BoardResolver, CommentResolver, LikeResolver],
 })
 export class BoardModule {}

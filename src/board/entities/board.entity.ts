@@ -1,6 +1,6 @@
 import {
   Field,
-  InputType,
+  InputType, Int,
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
@@ -42,6 +42,7 @@ export class Board extends CoreEntity {
   @Column()
   category: BoardCategory;
 
+  @Field(() => Int)
   @Column()
   userId: number;
   @Field(() => User)
