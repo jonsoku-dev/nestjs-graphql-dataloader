@@ -111,7 +111,7 @@ export class BoardService {
 
       const foundBoard = await query
         .select()
-        .where('id = :id', { id: boardId })
+        .where('board.id = :boardId', { boardId })
         .getOne();
 
       if (!foundBoard) {
@@ -127,9 +127,7 @@ export class BoardService {
         .set({
           ...other,
         })
-        .where('id = :id', {
-          id: boardId,
-        })
+        .where('board.id = :boardId', { boardId })
         .execute();
 
       return this.boardRepository.findOne({ id: boardId });
@@ -145,7 +143,7 @@ export class BoardService {
 
       const foundBoard = await query
         .select()
-        .where('id = :id', { id: boardId })
+        .where('board.id = :boardId', { boardId })
         .getOne();
 
       if (!foundBoard) {
@@ -159,9 +157,7 @@ export class BoardService {
       await query
         .delete()
         .from(Board)
-        .where('id = :id', {
-          id: boardId,
-        })
+        .where('board.id = :boardId', { boardId })
         .execute();
 
       return boardId;

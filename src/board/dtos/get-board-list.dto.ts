@@ -1,5 +1,5 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { IsEnum, IsOptional, IsPositive, IsString } from 'class-validator';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { Board, BoardCategory } from '../entities/board.entity';
 import { CursorPagination } from '../../common/dtos/CursorPagination.dto';
 
@@ -7,12 +7,12 @@ import { CursorPagination } from '../../common/dtos/CursorPagination.dto';
 export class GetBoardListFilter {
   @Field(() => String, { nullable: true })
   @IsOptional()
-  @IsPositive()
+  @IsString()
   after: string;
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  @IsPositive()
+  @IsString()
   first: string;
 
   @Field(() => String, { nullable: true })

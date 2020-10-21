@@ -47,7 +47,10 @@ export class Board extends CoreEntity {
   @Column()
   userId: string;
   @Field(() => User)
-  @ManyToOne((type) => User, (user) => user.boards)
+  @ManyToOne((type) => User, (user) => user.boards, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 

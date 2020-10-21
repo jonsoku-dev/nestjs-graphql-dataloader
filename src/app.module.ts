@@ -14,6 +14,9 @@ import * as redisStore from 'cache-manager-redis-store';
 import { BoardModule } from './board/board.module';
 import { BoardCommentModule } from './board-comment/board-comment.module';
 import { BoardLikeModule } from './board-like/board-like.module';
+import { BoardLikeLoader } from './loaders/board-like.loader';
+import { BoardCommentLoader } from './loaders/board-comment.loader';
+import { BoardUserLoader } from './loaders/board-user.loader';
 
 @Module({
   imports: [
@@ -57,7 +60,13 @@ import { BoardLikeModule } from './board-like/board-like.module';
       installSubscriptionHandlers: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
-      context: ({ req }) => ({ req }),
+      context: ({ req, res }) => ({
+        req,
+        res,
+        boardLikeLoader: BoardLikeLoader(),
+        boardCommentLoader: BoardCommentLoader(),
+        boardUserLoader: BoardUserLoader(),
+      }),
       debug: false,
       cors: {
         credentials: true,

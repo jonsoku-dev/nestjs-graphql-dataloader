@@ -67,10 +67,10 @@ export class BoardCommentService {
         throw new UnauthorizedException();
       }
       await this.commentRepository
-        .createQueryBuilder('comment')
+        .createQueryBuilder()
         .update(BoardComment)
         .set({ body })
-        .where('comment.id = :id', {
+        .where('id = :id', {
           id: commentId,
         })
         .execute();

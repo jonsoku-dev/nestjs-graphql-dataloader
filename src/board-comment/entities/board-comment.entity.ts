@@ -19,7 +19,10 @@ export class BoardComment extends CoreEntity {
   @Column()
   boardId: string;
   @Field(() => Board)
-  @ManyToOne((type) => Board, (board) => board.likes)
+  @ManyToOne((type) => Board, (board) => board.likes, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'boardId' })
   board: Board;
 
@@ -27,7 +30,10 @@ export class BoardComment extends CoreEntity {
   @Column()
   userId: string;
   @Field(() => User)
-  @ManyToOne((type) => User, (user) => user.likes)
+  @ManyToOne((type) => User, (user) => user.likes, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 }

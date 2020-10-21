@@ -47,10 +47,13 @@ export class AuthService {
 
   login = async ({ email, password }: LoginInput) => {
     try {
-      const found = await this.repository.findOne(
-        { email },
-        { select: ['password'] },
-      );
+      const found = await this.repository.findOne({
+        where: {
+          email,
+        },
+        select: ['id', 'email', 'password'],
+      });
+
       if (!found) {
         throw new NotFoundException('해당 이메일을 찾을 수 없습니다.');
       }
@@ -58,6 +61,9 @@ export class AuthService {
       if (!isMatch) {
         throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
       }
+
+      console.log(found);
+
       const payload: JwtPayloadInterface = { id: found.id };
       const token = await this.jwtService.sign(payload);
       return { token };

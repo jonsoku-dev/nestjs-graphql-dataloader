@@ -28,12 +28,12 @@ export class BoardLikeService {
 
   async like({ boardId }: LikeArgs, user: User) {
     try {
-      const query = this.likeRepository.createQueryBuilder('like');
+      const query = this.likeRepository.createQueryBuilder();
 
       const found = await query
         .select()
-        .andWhere('like.boardId = :boardId', { boardId })
-        .andWhere('like.userId = :userId', { userId: user.id })
+        .andWhere('boardId = :boardId', { boardId })
+        .andWhere('userId = :userId', { userId: user.id })
         .getOne();
 
       if (found) {
@@ -57,12 +57,12 @@ export class BoardLikeService {
 
   async unlike({ boardId }: LikeArgs, user: User) {
     try {
-      const query = this.likeRepository.createQueryBuilder('like');
+      const query = this.likeRepository.createQueryBuilder();
 
       const found = await query
         .select()
-        .andWhere('like.boardId = :boardId', { boardId })
-        .andWhere('like.userId = :userId', { userId: user.id })
+        .andWhere('boardId = :boardId', { boardId })
+        .andWhere('userId = :userId', { userId: user.id })
         .getOne();
 
       if (!found) {
@@ -74,8 +74,8 @@ export class BoardLikeService {
       await query
         .delete()
         .from(BoardLike)
-        .andWhere('like.boardId = :boardId', { boardId })
-        .andWhere('like.userId = :userId', { userId: user.id })
+        .andWhere('boardId = :boardId', { boardId })
+        .andWhere('userId = :userId', { userId: user.id })
         .execute();
       return boardId;
     } catch (e) {

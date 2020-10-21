@@ -46,8 +46,8 @@ export class BoardCommentResolver {
     );
   }
 
-  @ResolveField('user', (returns) => User)
-  async commentUser(@Parent() comment: BoardComment) {
-    return this.authService.findOneById(comment.userId);
-  }
+  // @ResolveField('user', (returns) => User)
+  // async commentUser(@Parent() comment: BoardComment) {
+  //   return this.authService.findOneById(comment.userId);
+  // }
 }

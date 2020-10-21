@@ -1,10 +1,4 @@
-import {
-  Args,
-  Mutation,
-  Parent,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from '../auth/auth.service';
 import { User } from '../auth/entities/user.entitiy';
 import { BoardLike } from './entities/board-like.entitiy';
@@ -31,10 +25,5 @@ export class BoardLikeResolver {
   @Mutation(() => String)
   async unlike(@Args() likeArgs: LikeArgs, @CurrentUser() user: User) {
     return this.likeService.unlike(likeArgs, user);
-  }
-
-  @ResolveField('user', (returns) => User)
-  async likeUser(@Parent() like: BoardLike) {
-    return this.authService.findOneById(like.userId);
   }
 }
