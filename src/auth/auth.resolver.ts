@@ -6,10 +6,9 @@ import { User } from './entities/user.entitiy';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from './gql-auth.guard';
 import { CurrentUser } from './current-user.decorator';
-import { GenerateCodeAndSendMailInput } from './dtos/generate-code-and-send-mail.dto';
-import { ConfirmCodeArg } from './dtos/confirm-code.dto';
-import { UserOutput } from './dtos/shared.dto';
+import { ForgotPasswordInput } from './dtos/forgot-password.dto';
 import { ResetPasswordInput } from './dtos/reset-password.dto';
+import { ForgotEmailInput } from './dtos/forgot-email.dto';
 
 @Resolver()
 export class AuthResolver {
@@ -20,8 +19,8 @@ export class AuthResolver {
     return true;
   }
 
-  @Mutation((returns) => UserOutput)
-  register(@Args('input') registerInput: RegisterInput): Promise<UserOutput> {
+  @Mutation((returns) => User)
+  register(@Args('input') registerInput: RegisterInput): Promise<User> {
     return this.authService.register(registerInput);
   }
 
@@ -31,29 +30,22 @@ export class AuthResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Query(() => UserOutput)
+  @Query(() => User)
   me(@CurrentUser() user: User) {
-    return {
-      ok: true,
-      data: user,
-    };
+    return user;
+  }
+
+  @Mutation((returns) => User)
+  forgotEmail(@Args('input') forgotEmailInput: ForgotEmailInput) {
+    return this.authService.forgotEmail(forgotEmailInput);
   }
 
   @Mutation((returns) => String)
-  generateCodeAndSendMail(
-    @Args('input') generateCodeAndSendMailInput: GenerateCodeAndSendMailInput,
-  ) {
-    return this.authService.generateCodeAndSendMail(
-      generateCodeAndSendMailInput,
-    );
+  forgotPassword(@Args('input') forgotPasswordInput: ForgotPasswordInput) {
+    return this.authService.forgotPassword(forgotPasswordInput);
   }
 
-  @Mutation((returns) => String)
-  confirmCode(@Args() confirmCodeArg: ConfirmCodeArg) {
-    return this.authService.confirmCode(confirmCodeArg);
-  }
-
-  @Mutation((returns) => UserOutput)
+  @Mutation(() => User)
   resetPassword(@Args('input') resetPasswordInput: ResetPasswordInput) {
     return this.authService.resetPassword(resetPasswordInput);
   }

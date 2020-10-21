@@ -1,26 +1,30 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsOptional, IsPositive } from 'class-validator';
-import { Board } from '../entities/board.entity';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { IsEnum, IsOptional, IsPositive, IsString } from 'class-validator';
+import { Board, BoardCategory } from '../entities/board.entity';
 import { CursorPagination } from '../../common/dtos/CursorPagination.dto';
-import { MutationOutput } from '../../common/dtos/MutationOutput.dto';
 
 @InputType()
 export class GetBoardListFilter {
-  @Field(() => Number)
+  @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsPositive()
-  after?: number;
+  after: number;
 
-  @Field(() => Number)
+  @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsPositive()
-  first?: number;
+  first: number;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  keyword: string;
+
+  @Field(() => BoardCategory, { nullable: true })
+  @IsOptional()
+  @IsEnum(BoardCategory)
+  category: BoardCategory;
 }
 
-@ObjectType({ isAbstract: true })
-export class CursorPaginatedBoardList extends CursorPagination(Board) {}
-
 @ObjectType()
-export class GetBoardListOutput extends MutationOutput(
-  CursorPaginatedBoardList,
-) {}
+export class GetBoardListOutput extends CursorPagination(Board) {}

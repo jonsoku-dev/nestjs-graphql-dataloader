@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { CommonModule } from './common/common.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
@@ -10,6 +10,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
+import * as redisStore from 'cache-manager-redis-store';
 import { BoardModule } from './board/board.module';
 
 @Module({
@@ -44,6 +45,11 @@ import { BoardModule } from './board/board.module';
           migrationsDir: 'src/migrations',
         },
       }),
+    }),
+    CacheModule.register({
+      store: redisStore,
+      host: process.env.REDIS_HOST,
+      port: +process.env.REDIS_PORT,
     }),
     GraphQLModule.forRoot({
       installSubscriptionHandlers: true,

@@ -1,4 +1,10 @@
-import { Column, Entity, BeforeInsert, BeforeUpdate } from 'typeorm/index';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  OneToMany,
+} from 'typeorm/index';
 import {
   Field,
   InputType,
@@ -7,7 +13,6 @@ import {
 } from '@nestjs/graphql';
 import { CoreEntity } from '../../common/entities/core.entity';
 import {
-  IsBoolean,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -19,6 +24,9 @@ import {
 import * as bcrypt from 'bcryptjs';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Exclude } from 'class-transformer';
+import { Board } from '../../board/entities/board.entity';
+import { Like } from '../../board/entities/like.entity';
+import { Comment } from '../../board/entities/comment.entitiy';
 
 enum UserRole {
   Client,
@@ -36,7 +44,7 @@ export class User extends CoreEntity {
   @Field((type) => String)
   @IsString()
   @IsNotEmpty()
-  @Length(4, 16)
+  @Length(1, 16)
   @Column()
   username: string;
 
@@ -47,7 +55,6 @@ export class User extends CoreEntity {
   @Column({ unique: true })
   email: string;
 
-  @Field((type) => String)
   @IsString()
   @IsNotEmpty()
   @Length(4, 255)
@@ -64,16 +71,15 @@ export class User extends CoreEntity {
   @Field((type) => Number, { nullable: true })
   @IsNumber()
   @IsOptional()
-  @Exclude()
   @Column({ nullable: true })
-  passwordSecretCode?: number;
+  confirmCode: number;
 
-  @Field((type) => Boolean, { nullable: true, defaultValue: false })
-  @IsBoolean()
-  @IsOptional()
-  @Exclude()
-  @Column({ nullable: true, default: false })
-  passwordConfirmSecretCode?: boolean;
+  @OneToMany((type) => Board, (board) => board.user)
+  boards: Board[];
+  @OneToMany((type) => Like, (like) => like.user)
+  likes: Like[];
+  @OneToMany((type) => Comment, (comment) => comment.user)
+  comments: Comment[];
 
   @BeforeInsert()
   @BeforeUpdate()

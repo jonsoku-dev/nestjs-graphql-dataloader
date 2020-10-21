@@ -5,4 +5,5 @@ import { Board } from '../entities/board.entity';
 export class CreateBoardInput extends PickType(Board, [
   'title',
   'description',
+  'category'
 ]) {}

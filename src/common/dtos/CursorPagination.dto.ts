@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Type } from '@nestjs/common';
 
 export const CursorPagination = <T>(classRef: Type<T>): any => {
+  console.log(classRef);
   @ObjectType(`${classRef.name}Edge`)
   abstract class EdgeType {
     @Field(() => String)

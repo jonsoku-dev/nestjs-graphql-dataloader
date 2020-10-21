@@ -3,27 +3,28 @@
 # ------------------------------------------------------
 
 type Board {
+  category: BoardCategory!
+  comments: [Comment!]!
   createdAt: DateTime!
   description: String!
   id: ID!
+  likes: [Like!]!
   title: String!
   updatedAt: DateTime!
+  user: User!
+  userId: Float!
+}
+
+enum BoardCategory {
+  FQ
+  FREE
+  JOB
+  TRADE
 }
 
 type BoardEdge {
   cursor: String!
   node: Board!
-}
-
-type BoardError {
-  message: String
-  status: Float
-}
-
-type BoardOutput {
-  data: Board
-  error: BoardError
-  ok: Boolean!
 }
 
 type BoardPageInfo {
@@ -32,19 +33,23 @@ type BoardPageInfo {
   startCursor: String
 }
 
+type Comment {
+  body: String!
+  createdAt: DateTime!
+  id: Float!
+  updatedAt: DateTime!
+  user: User!
+}
+
+input CreateBoardCommentInput {
+  boardId: Int!
+  body: String!
+}
+
 input CreateBoardInput {
+  category: BoardCategory!
   description: String!
   title: String!
-}
-
-type CursorPaginatedBoardList {
-  edges: [BoardEdge!]
-  pageInfo: BoardPageInfo
-}
-
-type CursorPaginatedBoardListError {
-  message: String
-  status: Float
 }
 
 """
@@ -52,19 +57,35 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-input GenerateCodeAndSendMailInput {
+input ForgotEmailInput {
+  username: String!
+}
+
+input ForgotPasswordInput {
   email: String!
+  password: String!
 }
 
 input GetBoardListFilter {
-  after: Float!
-  first: Float!
+  after: Int
+  category: BoardCategory
+  first: Int
+  keyword: String
 }
 
 type GetBoardListOutput {
-  data: CursorPaginatedBoardList
-  error: CursorPaginatedBoardListError
-  ok: Boolean!
+  edges: [BoardEdge!]
+  pageInfo: BoardPageInfo
+}
+
+type Like {
+  board: Board!
+  boardId: Float!
+  createdAt: DateTime!
+  id: ID!
+  updatedAt: DateTime!
+  user: User!
+  userId: Float!
 }
 
 input LoginInput {
@@ -73,24 +94,28 @@ input LoginInput {
 }
 
 type LoginOutput {
-  data: Token
-  error: TokenError
-  ok: Boolean!
+  token: String!
 }
 
 type Mutation {
-  confirmCode(email: String!, passwordSecretCode: Float!): String!
-  createBoard(input: CreateBoardInput!): BoardOutput!
-  generateCodeAndSendMail(input: GenerateCodeAndSendMailInput!): String!
+  createBoard(input: CreateBoardInput!): Board!
+  createBoardComment(input: CreateBoardCommentInput!): Comment!
+  deleteBoard(boardId: Float!): String!
+  forgotEmail(input: ForgotEmailInput!): User!
+  forgotPassword(input: ForgotPasswordInput!): String!
+  like(boardId: Int!): String!
   login(input: LoginInput!): LoginOutput!
-  register(input: RegisterInput!): UserOutput!
-  resetPassword(input: ResetPasswordInput!): UserOutput!
+  register(input: RegisterInput!): User!
+  resetPassword(input: ResetPasswordInput!): User!
+  unlike(boardId: Int!): String!
+  updateBoard(input: UpdateBoardInput!): Board!
+  updateBoardComment(input: UpdateBoardCommentInput!): Comment!
 }
 
 type Query {
-  getBoard(boardId: Float!): BoardOutput!
+  getBoard(boardId: Float!): Board!
   getBoardList(filter: GetBoardListFilter): GetBoardListOutput!
-  me: UserOutput!
+  me: User!
   test: Boolean!
 }
 
@@ -102,40 +127,31 @@ input RegisterInput {
 }
 
 input ResetPasswordInput {
-  email: String!
+  confirmCode: Float
   password: String!
 }
 
-type Token {
-  token: String!
+input UpdateBoardCommentInput {
+  boardId: Int
+  body: String
+  commentId: Int!
 }
 
-type TokenError {
-  message: String
-  status: Float
+input UpdateBoardInput {
+  boardId: Float!
+  category: BoardCategory
+  description: String
+  title: String
 }
 
 type User {
+  confirmCode: Float
   createdAt: DateTime!
   email: String!
   id: Float!
-  password: String!
-  passwordConfirmSecretCode: Boolean
-  passwordSecretCode: Float
   role: UserRole!
   updatedAt: DateTime!
   username: String!
-}
-
-type UserError {
-  message: String
-  status: Float
-}
-
-type UserOutput {
-  data: User
-  error: UserError
-  ok: Boolean!
 }
 
 enum UserRole {
