@@ -4,15 +4,15 @@
 
 type Board {
   category: BoardCategory!
-  comments: [Comment!]!
+  comments: [BoardComment!]!
   createdAt: DateTime!
   description: String!
   id: ID!
-  likes: [Like!]!
+  likes: [BoardLike!]!
   title: String!
   updatedAt: DateTime!
   user: User!
-  userId: Int!
+  userId: String!
 }
 
 enum BoardCategory {
@@ -22,9 +22,30 @@ enum BoardCategory {
   TRADE
 }
 
+type BoardComment {
+  board: Board!
+  boardId: String!
+  body: String!
+  createdAt: DateTime!
+  id: ID!
+  updatedAt: DateTime!
+  user: User!
+  userId: String!
+}
+
 type BoardEdge {
   cursor: String!
   node: Board!
+}
+
+type BoardLike {
+  board: Board!
+  boardId: String!
+  createdAt: DateTime!
+  id: String!
+  updatedAt: DateTime!
+  user: User!
+  userId: String!
 }
 
 type BoardPageInfo {
@@ -33,19 +54,8 @@ type BoardPageInfo {
   startCursor: String
 }
 
-type Comment {
-  board: Board!
-  boardId: Int!
-  body: String!
-  createdAt: DateTime!
-  id: Float!
-  updatedAt: DateTime!
-  user: User!
-  userId: Int!
-}
-
 input CreateBoardCommentInput {
-  boardId: Int!
+  boardId: String!
   body: String!
 }
 
@@ -70,25 +80,15 @@ input ForgotPasswordInput {
 }
 
 input GetBoardListFilter {
-  after: Int
+  after: String
   category: BoardCategory
-  first: Int
+  first: String
   keyword: String
 }
 
 type GetBoardListOutput {
   edges: [BoardEdge!]
   pageInfo: BoardPageInfo
-}
-
-type Like {
-  board: Board!
-  boardId: Int!
-  createdAt: DateTime!
-  id: ID!
-  updatedAt: DateTime!
-  user: User!
-  userId: Int!
 }
 
 input LoginInput {
@@ -102,21 +102,21 @@ type LoginOutput {
 
 type Mutation {
   createBoard(input: CreateBoardInput!): Board!
-  createBoardComment(input: CreateBoardCommentInput!): Comment!
-  deleteBoard(boardId: Float!): String!
+  createBoardComment(input: CreateBoardCommentInput!): BoardComment!
+  deleteBoard(boardId: String!): String!
   forgotEmail(input: ForgotEmailInput!): User!
   forgotPassword(input: ForgotPasswordInput!): String!
-  like(boardId: Int!): String!
+  like(boardId: String!): String!
   login(input: LoginInput!): LoginOutput!
   register(input: RegisterInput!): User!
   resetPassword(input: ResetPasswordInput!): User!
-  unlike(boardId: Int!): String!
+  unlike(boardId: String!): String!
   updateBoard(input: UpdateBoardInput!): Board!
-  updateBoardComment(input: UpdateBoardCommentInput!): Comment!
+  updateBoardComment(input: UpdateBoardCommentInput!): BoardComment!
 }
 
 type Query {
-  getBoard(boardId: Float!): Board!
+  getBoard(boardId: String!): Board!
   getBoardList(filter: GetBoardListFilter): GetBoardListOutput!
   me: User!
   test: Boolean!
@@ -135,13 +135,13 @@ input ResetPasswordInput {
 }
 
 input UpdateBoardCommentInput {
-  boardId: Int
+  boardId: String
   body: String
-  commentId: Int!
+  commentId: String!
 }
 
 input UpdateBoardInput {
-  boardId: Float!
+  boardId: String!
   category: BoardCategory
   description: String
   title: String
@@ -151,7 +151,7 @@ type User {
   confirmCode: Float
   createdAt: DateTime!
   email: String!
-  id: Float!
+  id: String!
   role: UserRole!
   updatedAt: DateTime!
   username: String!

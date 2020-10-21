@@ -25,8 +25,8 @@ import * as bcrypt from 'bcryptjs';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Exclude } from 'class-transformer';
 import { Board } from '../../board/entities/board.entity';
-import { Like } from '../../board/entities/like.entity';
-import { Comment } from '../../board/entities/comment.entitiy';
+import { BoardLike } from '../../board-like/entities/board-like.entitiy';
+import { BoardComment } from '../../board-comment/entities/board-comment.entity';
 
 enum UserRole {
   Client,
@@ -76,10 +76,10 @@ export class User extends CoreEntity {
 
   @OneToMany((type) => Board, (board) => board.user)
   boards: Board[];
-  @OneToMany((type) => Like, (like) => like.user)
-  likes: Like[];
-  @OneToMany((type) => Comment, (comment) => comment.user)
-  comments: Comment[];
+  @OneToMany((type) => BoardLike, (like) => like.user)
+  likes: BoardLike[];
+  @OneToMany((type) => BoardComment, (comment) => comment.user)
+  comments: BoardComment[];
 
   @BeforeInsert()
   @BeforeUpdate()

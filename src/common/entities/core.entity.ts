@@ -10,7 +10,7 @@ import {
 export abstract class CoreEntity extends BaseEntity {
   @Field((type) => ID)
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Field((type) => Date)
   @CreateDateColumn()

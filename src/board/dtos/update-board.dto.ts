@@ -1,11 +1,11 @@
 import { Field, InputType, PartialType } from '@nestjs/graphql';
 import { CreateBoardInput } from './create-board.dto';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 @InputType()
 export class UpdateBoardInput extends PartialType(CreateBoardInput) {
-  @Field(type => Number)
-  @IsNumber()
+  @Field((type) => String)
+  @IsString()
   @IsNotEmpty()
-  boardId: number;
+  boardId: string;
 }

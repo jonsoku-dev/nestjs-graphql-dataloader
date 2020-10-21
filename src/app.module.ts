@@ -12,6 +12,8 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
 import * as redisStore from 'cache-manager-redis-store';
 import { BoardModule } from './board/board.module';
+import { BoardCommentModule } from './board-comment/board-comment.module';
+import { BoardLikeModule } from './board-like/board-like.module';
 
 @Module({
   imports: [
@@ -88,6 +90,8 @@ import { BoardModule } from './board/board.module';
     CommonModule,
     AuthModule,
     BoardModule,
+    BoardCommentModule,
+    BoardLikeModule,
   ],
   controllers: [],
   providers: [

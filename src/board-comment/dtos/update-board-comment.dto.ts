@@ -1,13 +1,13 @@
-import { Field, InputType, Int, PartialType } from '@nestjs/graphql';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { Field, InputType, PartialType } from '@nestjs/graphql';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { CreateBoardCommentInput } from './create-board-comment.dto';
 
 @InputType()
 export class UpdateBoardCommentInput extends PartialType(
   CreateBoardCommentInput,
 ) {
-  @Field((type) => Int)
+  @Field((type) => String)
   @IsNotEmpty()
-  @IsNumber()
-  commentId: number;
+  @IsString()
+  commentId: string;
 }

@@ -20,17 +20,18 @@ import { BoardService } from './board.service';
 import { Board } from './entities/board.entity';
 import { UpdateBoardInput } from './dtos/update-board.dto';
 import { DeleteBoardArgs } from './dtos/delete-board.dto';
-import { LikeArgs } from './dtos/like.dto';
-import { CreateBoardCommentInput } from './dtos/create-board-comment.dto';
-import { Comment } from './entities/comment.entitiy';
-import { UpdateBoardCommentInput } from './dtos/update-board-comment.dto';
-import { Like } from './entities/like.entity';
+import { BoardLikeService } from '../board-like/board-like.service';
+import { BoardLike } from '../board-like/entities/board-like.entitiy';
+import { BoardCommentService } from '../board-comment/board-comment.service';
+import { BoardComment } from '../board-comment/entities/board-comment.entity';
 
 @Resolver(() => Board)
 export class BoardResolver {
   constructor(
     private readonly boardService: BoardService,
     private readonly authService: AuthService,
+    private readonly likeService: BoardLikeService,
+    private readonly commentService: BoardCommentService,
   ) {}
 
   @Query(() => GetBoardListOutput)
@@ -41,7 +42,7 @@ export class BoardResolver {
   }
 
   @Query(() => Board)
-  getBoard(@Args('boardId') boardId: number): Promise<Board> {
+  getBoard(@Args('boardId') boardId: string): Promise<Board> {
     return this.boardService.getBoard(boardId);
   }
 
@@ -72,73 +73,18 @@ export class BoardResolver {
     return this.boardService.deleteBoard(deleteBoardArgs, user);
   }
 
-  @UseGuards(GqlAuthGuard)
-  @Mutation(() => String)
-  like(@Args() likeArgs: LikeArgs, @CurrentUser() user: User) {
-    return this.boardService.like(likeArgs, user);
-  }
-
-  @UseGuards(GqlAuthGuard)
-  @Mutation(() => String)
-  unlike(@Args() likeArgs: LikeArgs, @CurrentUser() user: User) {
-    return this.boardService.unlike(likeArgs, user);
-  }
-
-  @UseGuards(GqlAuthGuard)
-  @Mutation(() => Comment)
-  createBoardComment(
-    @Args('input') createBoardCommentInput: CreateBoardCommentInput,
-    @CurrentUser() user: User,
-  ) {
-    return this.boardService.createBoardComment(createBoardCommentInput, user);
-  }
-
-  @UseGuards(GqlAuthGuard)
-  @Mutation(() => Comment)
-  updateBoardComment(
-    @Args('input') updateBoardCommentInput: UpdateBoardCommentInput,
-    @CurrentUser() user: User,
-  ) {
-    return this.boardService.updateBoardComment(updateBoardCommentInput, user);
-  }
-
   @ResolveField('user', (returns) => User)
   async boardUser(@Parent() board: Board) {
-      return this.authService.findOneById(board.userId);
+    return this.authService.findOneById(board.userId);
   }
 
-  @ResolveField('likes', (returns) => [Like])
+  @ResolveField('likes', (returns) => [BoardLike])
   async boardLikes(@Parent() board: Board) {
-    return this.boardService.findLikesByBoard(board.id);
+    return this.likeService.findAllById(board.id);
   }
 
-  @ResolveField('comments', (returns) => [Comment])
+  @ResolveField('comments', (returns) => [BoardComment])
   async boardComments(@Parent() board: Board) {
-    return this.boardService.findCommentsByBoard(board.id);
+    return this.commentService.findAllById(board.id);
   }
 }
-
-@Resolver(() => Comment)
-export class CommentResolver {
-  constructor(
-    private readonly authService: AuthService,
-  ) {}
-
-  @ResolveField('user', (returns) => User)
-  async commentUser(@Parent() comment: Comment) {
-    return this.authService.findOneById(comment.userId);
-  }
-}
-
-@Resolver(() => Like)
-export class LikeResolver {
-  constructor(
-    private readonly authService: AuthService,
-  ) {}
-
-  @ResolveField('user', (returns) => User)
-  async likeUser(@Parent() like: Like) {
-    return this.authService.findOneById(like.userId);
-  }
-}
-

@@ -5,15 +5,15 @@ import { CursorPagination } from '../../common/dtos/CursorPagination.dto';
 
 @InputType()
 export class GetBoardListFilter {
-  @Field(() => Int, { nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsPositive()
-  after: number;
+  after: string;
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsPositive()
-  first: number;
+  first: string;
 
   @Field(() => String, { nullable: true })
   @IsOptional()

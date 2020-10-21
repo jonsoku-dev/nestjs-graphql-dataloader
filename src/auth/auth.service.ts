@@ -126,7 +126,7 @@ export class AuthService {
     }
   };
 
-  findOneById = async (userId: number) => {
+  findOneById = async (userId: string) => {
     try {
       const foundUser = await this.repository.findOne({ id: userId });
       if (!foundUser) {
