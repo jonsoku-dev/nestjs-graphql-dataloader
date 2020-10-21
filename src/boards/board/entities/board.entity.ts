@@ -5,11 +5,11 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { CoreEntity } from '../../common/entities/core.entity';
+import { CoreEntity } from '../../../common/entities/core.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm/index';
 import { IsEnum, IsString } from 'class-validator';
 import { JoinColumn } from 'typeorm';
-import { User } from '../../auth/entities/user.entitiy';
+import { User } from '../../../auth/entities/user.entitiy';
 import { BoardLike } from '../../board-like/entities/board-like.entitiy';
 import { BoardComment } from '../../board-comment/entities/board-comment.entity';
 

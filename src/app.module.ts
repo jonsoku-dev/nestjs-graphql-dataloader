@@ -11,12 +11,12 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
 import * as redisStore from 'cache-manager-redis-store';
-import { BoardModule } from './board/board.module';
-import { BoardCommentModule } from './board-comment/board-comment.module';
-import { BoardLikeModule } from './board-like/board-like.module';
-import { BoardLikeLoader } from './loaders/board-like.loader';
-import { BoardCommentLoader } from './loaders/board-comment.loader';
-import { BoardUserLoader } from './loaders/board-user.loader';
+import { BoardModule } from './boards/board/board.module';
+import { BoardCommentModule } from './boards/board-comment/board-comment.module';
+import { BoardLikeModule } from './boards/board-like/board-like.module';
+import { BoardLikeLoader } from './loaders/boards/board-like.loader';
+import { BoardCommentLoader } from './loaders/boards/board-comment.loader';
+import { UserLoader } from './loaders/boards/user.loader';
 
 @Module({
   imports: [
@@ -63,9 +63,9 @@ import { BoardUserLoader } from './loaders/board-user.loader';
       context: ({ req, res }) => ({
         req,
         res,
+        userLoader: UserLoader(),
         boardLikeLoader: BoardLikeLoader(),
         boardCommentLoader: BoardCommentLoader(),
-        boardUserLoader: BoardUserLoader(),
       }),
       debug: false,
       cors: {

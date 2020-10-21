@@ -13,26 +13,18 @@ import {
   GetBoardListOutput,
 } from './dtos/get-board-list.dto';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '../auth/gql-auth.guard';
-import { CurrentUser } from '../auth/current-user.decorator';
-import { User } from '../auth/entities/user.entitiy';
-import { AuthService } from '../auth/auth.service';
+import { GqlAuthGuard } from '../../auth/gql-auth.guard';
+import { CurrentUser } from '../../auth/current-user.decorator';
+import { User } from '../../auth/entities/user.entitiy';
 import { BoardService } from './board.service';
 import { Board } from './entities/board.entity';
 import { UpdateBoardInput } from './dtos/update-board.dto';
 import { DeleteBoardArgs } from './dtos/delete-board.dto';
-import { BoardLikeService } from '../board-like/board-like.service';
-import { BoardCommentService } from '../board-comment/board-comment.service';
-import { IGraphQLContext } from '../types/graphql.types';
+import { IGraphQLContext } from '../../types/graphql.types';
 
 @Resolver(() => Board)
 export class BoardResolver {
-  constructor(
-    private readonly boardService: BoardService,
-    private readonly authService: AuthService,
-    private readonly likeService: BoardLikeService,
-    private readonly commentService: BoardCommentService,
-  ) {}
+  constructor(private readonly boardService: BoardService) {}
 
   @Query(() => GetBoardListOutput)
   getBoardList(
@@ -75,7 +67,7 @@ export class BoardResolver {
 
   @ResolveProperty('user')
   async user(@Root() board: Board, @Context() ctx: IGraphQLContext) {
-    return await ctx.boardUserLoader.load(board.id);
+    return await ctx.userLoader.load(board.userId);
   }
 
   @ResolveProperty('likes')

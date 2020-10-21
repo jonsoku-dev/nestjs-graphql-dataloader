@@ -10,7 +10,7 @@ import { Board } from './entities/board.entity';
 import { Repository } from 'typeorm/index';
 import { CreateBoardInput } from './dtos/create-board.dto';
 import { GetBoardListFilter } from './dtos/get-board-list.dto';
-import { User } from '../auth/entities/user.entitiy';
+import { User } from '../../auth/entities/user.entitiy';
 import { UpdateBoardInput } from './dtos/update-board.dto';
 import { DeleteBoardArgs } from './dtos/delete-board.dto';
 

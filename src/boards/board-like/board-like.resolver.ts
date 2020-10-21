@@ -1,19 +1,23 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { AuthService } from '../auth/auth.service';
-import { User } from '../auth/entities/user.entitiy';
+import {
+  Args,
+  Context,
+  Mutation,
+  ResolveProperty,
+  Resolver,
+  Root,
+} from '@nestjs/graphql';
+import { User } from '../../auth/entities/user.entitiy';
 import { BoardLike } from './entities/board-like.entitiy';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '../auth/gql-auth.guard';
-import { CurrentUser } from '../auth/current-user.decorator';
+import { GqlAuthGuard } from '../../auth/gql-auth.guard';
+import { CurrentUser } from '../../auth/current-user.decorator';
 import { LikeArgs } from './dtos/like.dto';
 import { BoardLikeService } from './board-like.service';
+import { IGraphQLContext } from '../../types/graphql.types';
 
 @Resolver((of) => BoardLike)
 export class BoardLikeResolver {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly likeService: BoardLikeService,
-  ) {}
+  constructor(private readonly likeService: BoardLikeService) {}
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => String)
@@ -25,5 +29,10 @@ export class BoardLikeResolver {
   @Mutation(() => String)
   async unlike(@Args() likeArgs: LikeArgs, @CurrentUser() user: User) {
     return this.likeService.unlike(likeArgs, user);
+  }
+
+  @ResolveProperty('user')
+  async user(@Root() like: BoardLike, @Context() ctx: IGraphQLContext) {
+    return await ctx.userLoader.load(like.userId);
   }
 }

@@ -1,26 +1,24 @@
 import {
   Args,
+  Context,
   Mutation,
-  Parent,
-  ResolveField,
+  ResolveProperty,
   Resolver,
+  Root,
 } from '@nestjs/graphql';
-import { AuthService } from '../auth/auth.service';
-import { User } from '../auth/entities/user.entitiy';
+import { User } from '../../auth/entities/user.entitiy';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '../auth/gql-auth.guard';
+import { GqlAuthGuard } from '../../auth/gql-auth.guard';
 import { CreateBoardCommentInput } from './dtos/create-board-comment.dto';
-import { CurrentUser } from '../auth/current-user.decorator';
+import { CurrentUser } from '../../auth/current-user.decorator';
 import { UpdateBoardCommentInput } from './dtos/update-board-comment.dto';
 import { BoardCommentService } from './board-comment.service';
 import { BoardComment } from './entities/board-comment.entity';
+import { IGraphQLContext } from '../../types/graphql.types';
 
 @Resolver(() => BoardComment)
 export class BoardCommentResolver {
-  constructor(
-    private readonly commentService: BoardCommentService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly commentService: BoardCommentService) {}
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => BoardComment)
@@ -46,8 +44,8 @@ export class BoardCommentResolver {
     );
   }
 
-  // @ResolveField('user', (returns) => User)
-  // async commentUser(@Parent() comment: BoardComment) {
-  //   return this.authService.findOneById(comment.userId);
-  // }
+  @ResolveProperty('user')
+  async user(@Root() comment: BoardComment, @Context() ctx: IGraphQLContext) {
+    return await ctx.userLoader.load(comment.userId);
+  }
 }

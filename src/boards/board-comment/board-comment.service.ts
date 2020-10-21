@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateBoardCommentInput } from './dtos/create-board-comment.dto';
-import { User } from '../auth/entities/user.entitiy';
+import { User } from '../../auth/entities/user.entitiy';
 import { UpdateBoardCommentInput } from './dtos/update-board-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from '../board/entities/board.entity';

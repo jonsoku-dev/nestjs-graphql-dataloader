@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { LikeArgs } from './dtos/like.dto';
-import { User } from '../auth/entities/user.entitiy';
+import { User } from '../../auth/entities/user.entitiy';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BoardLike } from './entities/board-like.entitiy';
 import { Repository } from 'typeorm';
@@ -19,7 +19,7 @@ export class BoardLikeService {
 
   async findAllById(boardId: string) {
     try {
-      return await this.likeRepository.find({ where: { id: boardId } });
+      return await this.likeRepository.find({ where: { boardId } });
     } catch (e) {
       console.error(e);
       throw new HttpException(e.response, e.status);

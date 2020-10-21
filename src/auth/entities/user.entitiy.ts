@@ -24,9 +24,9 @@ import {
 import * as bcrypt from 'bcryptjs';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Exclude } from 'class-transformer';
-import { Board } from '../../board/entities/board.entity';
-import { BoardLike } from '../../board-like/entities/board-like.entitiy';
-import { BoardComment } from '../../board-comment/entities/board-comment.entity';
+import { Board } from '../../boards/board/entities/board.entity';
+import { BoardLike } from '../../boards/board-like/entities/board-like.entitiy';
+import { BoardComment } from '../../boards/board-comment/entities/board-comment.entity';
 
 enum UserRole {
   Client,
