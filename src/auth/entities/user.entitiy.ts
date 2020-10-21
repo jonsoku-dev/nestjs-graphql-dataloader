@@ -27,8 +27,9 @@ import { Exclude } from 'class-transformer';
 import { Board } from '../../boards/board/entities/board.entity';
 import { BoardLike } from '../../boards/board-like/entities/board-like.entitiy';
 import { BoardComment } from '../../boards/board-comment/entities/board-comment.entity';
+import { Notice } from '../../notices/notice/notice.entitiy';
 
-enum UserRole {
+export enum UserRole {
   Client,
   Admin,
 }
@@ -80,6 +81,8 @@ export class User extends CoreEntity {
   likes: BoardLike[];
   @OneToMany((type) => BoardComment, (comment) => comment.user)
   comments: BoardComment[];
+  @OneToMany((type) => Notice, (notice) => notice.user)
+  notices: Notice[];
 
   @BeforeInsert()
   @BeforeUpdate()

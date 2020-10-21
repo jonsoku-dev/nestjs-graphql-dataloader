@@ -65,6 +65,12 @@ input CreateBoardInput {
   title: String!
 }
 
+input CreateNoticeInput {
+  description: String!
+  imageUrl: String
+  title: String!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -91,6 +97,17 @@ type GetBoardListOutput {
   pageInfo: BoardPageInfo
 }
 
+input GetNoticeListFilter {
+  after: String
+  first: String
+  keyword: String
+}
+
+type GetNoticeListOutput {
+  edges: [NoticeEdge!]
+  pageInfo: NoticePageInfo
+}
+
 input LoginInput {
   email: String!
   password: String!
@@ -103,7 +120,9 @@ type LoginOutput {
 type Mutation {
   createBoard(input: CreateBoardInput!): Board!
   createBoardComment(input: CreateBoardCommentInput!): BoardComment!
+  createNotice(input: CreateNoticeInput!): Notice!
   deleteBoard(boardId: String!): String!
+  deleteNotice(noticeId: String!): Notice!
   forgotEmail(input: ForgotEmailInput!): User!
   forgotPassword(input: ForgotPasswordInput!): String!
   like(boardId: String!): String!
@@ -113,11 +132,36 @@ type Mutation {
   unlike(boardId: String!): String!
   updateBoard(input: UpdateBoardInput!): Board!
   updateBoardComment(input: UpdateBoardCommentInput!): BoardComment!
+  updateNotice(input: UpdateNoticeInput!): Notice!
+}
+
+type Notice {
+  createdAt: DateTime!
+  description: String!
+  id: String!
+  imageUrl: String
+  title: String!
+  updatedAt: DateTime!
+  user: User!
+  userId: String!
+}
+
+type NoticeEdge {
+  cursor: String!
+  node: Notice!
+}
+
+type NoticePageInfo {
+  endCursor: String
+  hasNextPage: Boolean
+  startCursor: String
 }
 
 type Query {
   getBoard(boardId: String!): Board!
   getBoardList(filter: GetBoardListFilter): GetBoardListOutput!
+  getNotice(noticeId: String!): Notice!
+  getNoticeList(filter: GetNoticeListFilter): GetNoticeListOutput!
   me: User!
   test: Boolean!
 }
@@ -144,6 +188,13 @@ input UpdateBoardInput {
   boardId: String!
   category: BoardCategory
   description: String
+  title: String
+}
+
+input UpdateNoticeInput {
+  description: String
+  imageUrl: String
+  noticeId: String!
   title: String
 }
 

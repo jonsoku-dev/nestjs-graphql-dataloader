@@ -17,6 +17,7 @@ import { BoardLikeModule } from './boards/board-like/board-like.module';
 import { BoardLikeLoader } from './loaders/boards/board-like.loader';
 import { BoardCommentLoader } from './loaders/boards/board-comment.loader';
 import { UserLoader } from './loaders/boards/user.loader';
+import { NoticeModule } from './notices/notice/notice.module';
 
 @Module({
   imports: [
@@ -101,6 +102,7 @@ import { UserLoader } from './loaders/boards/user.loader';
     BoardModule,
     BoardCommentModule,
     BoardLikeModule,
+    NoticeModule,
   ],
   controllers: [],
   providers: [
