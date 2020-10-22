@@ -1,4 +1,13 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Query,
+  ResolveField,
+  Resolver,
+  Root,
+  Parent,
+} from '@nestjs/graphql';
 import { RegisterInput } from './dtos/register.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { AuthService } from './auth.service';
@@ -9,8 +18,9 @@ import { CurrentUser } from './current-user.decorator';
 import { ForgotPasswordInput } from './dtos/forgot-password.dto';
 import { ResetPasswordInput } from './dtos/reset-password.dto';
 import { ForgotEmailInput } from './dtos/forgot-email.dto';
+import { IGraphQLContext } from '../types/graphql.types';
 
-@Resolver()
+@Resolver((of) => User)
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
@@ -35,6 +45,11 @@ export class AuthResolver {
     return user;
   }
 
+  @Query(() => User)
+  findUser(@Args('userId') userId: string) {
+    return this.authService.findOneById(userId);
+  }
+
   @Mutation((returns) => User)
   forgotEmail(@Args('input') forgotEmailInput: ForgotEmailInput) {
     return this.authService.forgotEmail(forgotEmailInput);
@@ -48,5 +63,10 @@ export class AuthResolver {
   @Mutation(() => User)
   resetPassword(@Args('input') resetPasswordInput: ResetPasswordInput) {
     return this.authService.resetPassword(resetPasswordInput);
+  }
+
+  @ResolveField()
+  sns(@Parent() user: User, @Context() ctx: IGraphQLContext) {
+    return ctx.snsLoader.load(user.id);
   }
 }

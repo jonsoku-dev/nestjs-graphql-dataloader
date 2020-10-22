@@ -1,10 +1,10 @@
 import { ArgsType, Field } from '@nestjs/graphql';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 @ArgsType()
 export class DeleteBoardArgs {
-  @Field(() => Number)
-  @IsNumber()
+  @Field(() => String)
+  @IsString()
   @IsNotEmpty()
-  boardId: number;
+  boardId: string;
 }

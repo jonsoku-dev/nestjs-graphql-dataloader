@@ -1,16 +1,17 @@
 import {
   Field,
-  InputType, Int,
+  InputType,
+  Int,
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { CoreEntity } from '../../common/entities/core.entity';
+import { CoreEntity } from '../../../common/entities/core.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm/index';
 import { IsEnum, IsString } from 'class-validator';
 import { JoinColumn } from 'typeorm';
-import { User } from '../../auth/entities/user.entitiy';
-import { Like } from './like.entity';
-import { Comment } from './comment.entitiy';
+import { User } from '../../../auth/entities/user.entitiy';
+import { BoardLike } from '../../board-like/entities/board-like.entitiy';
+import { BoardComment } from '../../board-comment/entities/board-comment.entity';
 
 export enum BoardCategory {
   FREE,
@@ -42,16 +43,19 @@ export class Board extends CoreEntity {
   @Column()
   category: BoardCategory;
 
-  @Field(() => Int)
+  @Field(() => String)
   @Column()
-  userId: number;
+  userId: string;
   @Field(() => User)
-  @ManyToOne((type) => User, (user) => user.boards)
+  @ManyToOne((type) => User, (user) => user.boards, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @OneToMany((type) => Like, (like) => like.board)
-  likes: Like[];
-  @OneToMany((type) => Comment, (comment) => comment.board)
-  comments: Comment[];
+  @OneToMany((type) => BoardLike, (like) => like.board)
+  likes: BoardLike[];
+  @OneToMany((type) => BoardComment, (comment) => comment.board)
+  comments: BoardComment[];
 }

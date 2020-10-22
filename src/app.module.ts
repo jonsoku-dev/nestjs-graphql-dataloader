@@ -11,7 +11,14 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
 import * as redisStore from 'cache-manager-redis-store';
-import { BoardModule } from './board/board.module';
+import { BoardModule } from './boards/board/board.module';
+import { BoardCommentModule } from './boards/board-comment/board-comment.module';
+import { BoardLikeModule } from './boards/board-like/board-like.module';
+import { BoardLikeLoader } from './loaders/boards/board-like.loader';
+import { BoardCommentLoader } from './loaders/boards/board-comment.loader';
+import { UserLoader } from './loaders/boards/user.loader';
+import { NoticeModule } from './notices/notice/notice.module';
+import { SnsLoader } from './loaders/sns.loader';
 
 @Module({
   imports: [
@@ -55,7 +62,14 @@ import { BoardModule } from './board/board.module';
       installSubscriptionHandlers: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
-      context: ({ req }) => ({ req }),
+      context: ({ req, res }) => ({
+        req,
+        res,
+        userLoader: UserLoader(),
+        boardLikeLoader: BoardLikeLoader(),
+        boardCommentLoader: BoardCommentLoader(),
+        snsLoader: SnsLoader(),
+      }),
       debug: false,
       cors: {
         credentials: true,
@@ -88,6 +102,9 @@ import { BoardModule } from './board/board.module';
     CommonModule,
     AuthModule,
     BoardModule,
+    BoardCommentModule,
+    BoardLikeModule,
+    NoticeModule,
   ],
   controllers: [],
   providers: [

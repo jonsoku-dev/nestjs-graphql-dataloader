@@ -1,5 +1,4 @@
 import {
-  ConflictException,
   HttpException,
   Injectable,
   InternalServerErrorException,
@@ -11,26 +10,15 @@ import { Board } from './entities/board.entity';
 import { Repository } from 'typeorm/index';
 import { CreateBoardInput } from './dtos/create-board.dto';
 import { GetBoardListFilter } from './dtos/get-board-list.dto';
-import { User } from '../auth/entities/user.entitiy';
+import { User } from '../../auth/entities/user.entitiy';
 import { UpdateBoardInput } from './dtos/update-board.dto';
 import { DeleteBoardArgs } from './dtos/delete-board.dto';
-import { Like } from './entities/like.entity';
-import { LikeArgs } from './dtos/like.dto';
-import { CreateBoardCommentInput } from './dtos/create-board-comment.dto';
-import { Comment } from './entities/comment.entitiy';
-import { UpdateBoardCommentInput } from './dtos/update-board-comment.dto';
 
 @Injectable()
 export class BoardService {
   constructor(
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(Like)
-    private readonly likeRepository: Repository<Like>,
-    @InjectRepository(Comment)
-    private readonly commentRepository: Repository<Comment>,
   ) {}
 
   async getBoardList({ after, first, keyword, category }: GetBoardListFilter) {
@@ -42,7 +30,7 @@ export class BoardService {
         query.andWhere('board.id < :after', { after });
       }
       if (first) {
-        limit = first;
+        limit = parseInt(first, 10);
       }
       if (keyword) {
         query.andWhere('board.title LIKE :keyword', {
@@ -82,7 +70,7 @@ export class BoardService {
     }
   }
 
-  async getBoard(boardId: number) {
+  async getBoard(boardId: string) {
     try {
       const found = await this.boardRepository.findOne({
         where: {
@@ -123,7 +111,7 @@ export class BoardService {
 
       const foundBoard = await query
         .select()
-        .where('id = :id', { id: boardId })
+        .where('board.id = :boardId', { boardId })
         .getOne();
 
       if (!foundBoard) {
@@ -139,9 +127,7 @@ export class BoardService {
         .set({
           ...other,
         })
-        .where('id = :id', {
-          id: boardId,
-        })
+        .where('board.id = :boardId', { boardId })
         .execute();
 
       return this.boardRepository.findOne({ id: boardId });
@@ -157,7 +143,7 @@ export class BoardService {
 
       const foundBoard = await query
         .select()
-        .where('id = :id', { id: boardId })
+        .where('board.id = :boardId', { boardId })
         .getOne();
 
       if (!foundBoard) {
@@ -171,9 +157,7 @@ export class BoardService {
       await query
         .delete()
         .from(Board)
-        .where('id = :id', {
-          id: boardId,
-        })
+        .where('board.id = :boardId', { boardId })
         .execute();
 
       return boardId;
@@ -181,121 +165,5 @@ export class BoardService {
       console.error(e);
       throw new HttpException(e.response, e.status);
     }
-  }
-
-  async like({ boardId }: LikeArgs, user: User) {
-    try {
-      const query = this.likeRepository.createQueryBuilder('like');
-
-      const found = await query
-        .select()
-        .andWhere('like.boardId = :boardId', { boardId })
-        .andWhere('like.userId = :userId', { userId: user.id })
-        .getOne();
-
-      if (found) {
-        throw new ConflictException();
-      }
-
-      await query
-        .insert()
-        .into(Like)
-        .values({
-          user,
-          boardId,
-        })
-        .execute();
-      return boardId;
-    } catch (e) {
-      console.error(e);
-      throw new HttpException(e.response, e.status);
-    }
-  }
-
-  async unlike({ boardId }: LikeArgs, user: User) {
-    try {
-      const query = this.likeRepository.createQueryBuilder('like');
-
-      const found = await query
-        .select()
-        .andWhere('like.boardId = :boardId', { boardId })
-        .andWhere('like.userId = :userId', { userId: user.id })
-        .getOne();
-
-      if (!found) {
-        throw new NotFoundException();
-      }
-
-      await query
-        .delete()
-        .from(Like)
-        .andWhere('like.boardId = :boardId', { boardId })
-        .andWhere('like.userId = :userId', { userId: user.id })
-        .execute();
-      return boardId;
-    } catch (e) {
-      console.error(e);
-      throw new HttpException(e.response, e.status);
-    }
-  }
-
-  async createBoardComment(
-    { boardId, body }: CreateBoardCommentInput,
-    user: User,
-  ) {
-    try {
-      const foundBoard = await this.boardRepository.findOne({ id: boardId });
-      if (!foundBoard) {
-        throw new NotFoundException();
-      }
-      return await this.commentRepository
-        .create({
-          boardId,
-          user,
-          body,
-        })
-        .save();
-    } catch (e) {
-      console.error(e);
-      throw new HttpException(e.response, e.status);
-    }
-  }
-
-  async updateBoardComment(
-    { commentId, body }: UpdateBoardCommentInput,
-    user: User,
-  ) {
-    try {
-      const foundComment = await this.commentRepository.findOne({
-        id: commentId,
-      });
-      if (!foundComment) {
-        throw new NotFoundException();
-      }
-      if (foundComment.userId !== user.id) {
-        throw new UnauthorizedException();
-      }
-      await this.commentRepository
-        .createQueryBuilder('comment')
-        .update(Comment)
-        .set({ body })
-        .where('comment.id = :id', {
-          id: commentId,
-        })
-        .execute();
-
-      return this.commentRepository.findOne({ id: commentId });
-    } catch (e) {
-      console.error(e);
-      throw new HttpException(e.response, e.status);
-    }
-  }
-
-  async findLikesByBoard(boardId: number) {
-    return this.likeRepository.find({ where: { boardId } });
-  }
-
-  async findCommentsByBoard(boardId: number) {
-    return this.commentRepository.find({ where: { boardId } });
   }
 }

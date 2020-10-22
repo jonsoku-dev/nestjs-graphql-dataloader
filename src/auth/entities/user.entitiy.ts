@@ -24,11 +24,14 @@ import {
 import * as bcrypt from 'bcryptjs';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Exclude } from 'class-transformer';
-import { Board } from '../../board/entities/board.entity';
-import { Like } from '../../board/entities/like.entity';
-import { Comment } from '../../board/entities/comment.entitiy';
+import { Board } from '../../boards/board/entities/board.entity';
+import { BoardLike } from '../../boards/board-like/entities/board-like.entitiy';
+import { BoardComment } from '../../boards/board-comment/entities/board-comment.entity';
+import { Notice } from '../../notices/notice/notice.entitiy';
+import { JoinColumn, OneToOne } from 'typeorm';
+import { Sns } from './sns.entity';
 
-enum UserRole {
+export enum UserRole {
   Client,
   Admin,
 }
@@ -74,12 +77,18 @@ export class User extends CoreEntity {
   @Column({ nullable: true })
   confirmCode: number;
 
+  @Field(() => Sns, { nullable: true })
+  @OneToOne((type) => Sns, (sns) => sns.user)
+  sns: Sns;
+
   @OneToMany((type) => Board, (board) => board.user)
   boards: Board[];
-  @OneToMany((type) => Like, (like) => like.user)
-  likes: Like[];
-  @OneToMany((type) => Comment, (comment) => comment.user)
-  comments: Comment[];
+  @OneToMany((type) => BoardLike, (like) => like.user)
+  likes: BoardLike[];
+  @OneToMany((type) => BoardComment, (comment) => comment.user)
+  comments: BoardComment[];
+  @OneToMany((type) => Notice, (notice) => notice.user)
+  notices: Notice[];
 
   @BeforeInsert()
   @BeforeUpdate()

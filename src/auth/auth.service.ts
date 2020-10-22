@@ -16,12 +16,15 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { ForgotPasswordInput } from './dtos/forgot-password.dto';
 import { ResetPasswordInput } from './dtos/reset-password.dto';
 import { ForgotEmailInput } from './dtos/forgot-email.dto';
+import { Sns } from './entities/sns.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly repository: Repository<User>,
+    @InjectRepository(Sns)
+    private readonly snsRepository: Repository<Sns>,
     private readonly jwtService: JwtService,
     private readonly mailerService: MailerService,
   ) {}
@@ -47,10 +50,13 @@ export class AuthService {
 
   login = async ({ email, password }: LoginInput) => {
     try {
-      const found = await this.repository.findOne(
-        { email },
-        { select: ['password'] },
-      );
+      const found = await this.repository.findOne({
+        where: {
+          email,
+        },
+        select: ['id', 'email', 'password'],
+      });
+
       if (!found) {
         throw new NotFoundException('해당 이메일을 찾을 수 없습니다.');
       }
@@ -58,6 +64,9 @@ export class AuthService {
       if (!isMatch) {
         throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
       }
+
+      console.log(found);
+
       const payload: JwtPayloadInterface = { id: found.id };
       const token = await this.jwtService.sign(payload);
       return { token };
@@ -126,7 +135,7 @@ export class AuthService {
     }
   };
 
-  findOneById = async (userId: number) => {
+  findOneById = async (userId: string) => {
     try {
       const foundUser = await this.repository.findOne({ id: userId });
       if (!foundUser) {
