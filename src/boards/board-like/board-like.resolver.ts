@@ -2,9 +2,9 @@ import {
   Args,
   Context,
   Mutation,
-  ResolveProperty,
+  Parent,
+  ResolveField,
   Resolver,
-  Root,
 } from '@nestjs/graphql';
 import { User } from '../../auth/entities/user.entitiy';
 import { BoardLike } from './entities/board-like.entitiy';
@@ -31,8 +31,8 @@ export class BoardLikeResolver {
     return this.likeService.unlike(likeArgs, user);
   }
 
-  @ResolveProperty('user')
-  async user(@Root() like: BoardLike, @Context() ctx: IGraphQLContext) {
+  @ResolveField('user', returns => User)
+  async getUser(@Parent() like: BoardLike, @Context() ctx: IGraphQLContext) {
     return await ctx.userLoader.load(like.userId);
   }
 }

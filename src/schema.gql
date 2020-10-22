@@ -158,6 +158,7 @@ type NoticePageInfo {
 }
 
 type Query {
+  findUser(userId: String!): User!
   getBoard(boardId: String!): Board!
   getBoardList(filter: GetBoardListFilter): GetBoardListOutput!
   getNotice(noticeId: String!): Notice!
@@ -176,6 +177,17 @@ input RegisterInput {
 input ResetPasswordInput {
   confirmCode: Float
   password: String!
+}
+
+type Sns {
+  facebook: String!
+  id: ID!
+  instagram: String!
+  kakaotalk: String!
+  line: String!
+  twitter: String!
+  user: User!
+  userId: String!
 }
 
 input UpdateBoardCommentInput {
@@ -204,6 +216,7 @@ type User {
   email: String!
   id: String!
   role: UserRole!
+  sns: Sns
   updatedAt: DateTime!
   username: String!
 }

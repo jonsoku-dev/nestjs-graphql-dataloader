@@ -6,10 +6,11 @@ import { AuthResolver } from './auth.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entitiy';
 import { JwtStrategy } from './jwt.strategy';
+import { Sns } from './entities/sns.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Sns]),
     PassportModule.register({
       defaultStrategy: 'jwt',
     }),

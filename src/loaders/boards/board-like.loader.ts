@@ -1,15 +1,13 @@
 import * as DataLoader from 'dataloader';
 import { getRepository } from 'typeorm';
-import { Board } from '../../boards/board/entities/board.entity';
+import { BoardLike } from '../../boards/board-like/entities/board-like.entitiy';
 
 export const BoardLikeLoader = () =>
   new DataLoader(async (keys: string[]) => {
-    const boards = await getRepository(Board)
-      .createQueryBuilder('board')
-      .leftJoinAndSelect('board.likes', 'likes')
-      .where('board.id IN (:...keys)', { keys })
+    const likes = await getRepository(BoardLike)
+      .createQueryBuilder()
+      .where('boardId IN (:...keys)', { keys })
       .getMany();
 
-    return boards.map((board) => board.likes);
+    return keys.map((key) => likes.filter((like) => like.boardId === key));
   });
-

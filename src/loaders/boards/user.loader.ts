@@ -4,8 +4,10 @@ import { User } from '../../auth/entities/user.entitiy';
 
 export const UserLoader = () =>
   new DataLoader(async (keys: string[]) => {
-    return await getRepository(User)
+    const users = await getRepository(User)
       .createQueryBuilder('user')
       .where('user.id IN (:...keys)', { keys })
       .getMany();
+
+    return keys.map((key) => users.find((user) => user.id === key));
   });

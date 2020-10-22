@@ -2,10 +2,10 @@ import {
   Args,
   Context,
   Mutation,
+  Parent,
   Query,
-  ResolveProperty,
+  ResolveField,
   Resolver,
-  Root,
 } from '@nestjs/graphql';
 import { Notice } from './notice.entitiy';
 import { CreateNoticeInput } from './dtos/create-notice.dto';
@@ -53,6 +53,7 @@ export class NoticeResolver {
 
   @Query((type) => Notice)
   getNotice(@Args('noticeId') noticeId: string) {
+    console.log(typeof noticeId);
     return this.noticeService.getNotice(noticeId);
   }
 
@@ -62,8 +63,8 @@ export class NoticeResolver {
     return this.noticeService.deleteNotice(noticeId, user);
   }
 
-  @ResolveProperty('user')
-  async user(@Root() notice: Notice, @Context() ctx: IGraphQLContext) {
+  @ResolveField('user', returns => User)
+  async getUser(@Parent() notice: Notice, @Context() ctx: IGraphQLContext) {
     return await ctx.userLoader.load(notice.userId);
   }
 }

@@ -3,6 +3,7 @@ import * as DataLoader from 'dataloader';
 import { BoardLike } from '../boards/board-like/entities/board-like.entitiy';
 import { BoardComment } from '../boards/board-comment/entities/board-comment.entity';
 import { User } from '../auth/entities/user.entitiy';
+import { Sns } from '../auth/entities/sns.entity';
 
 export interface IGraphQLContext {
   req: Request;
@@ -10,4 +11,5 @@ export interface IGraphQLContext {
   boardLikeLoader: DataLoader<string, BoardLike[]>;
   boardCommentLoader: DataLoader<string, BoardComment[]>;
   userLoader: DataLoader<string, User[]>;
+  snsLoader: DataLoader<string, Sns[]>
 }

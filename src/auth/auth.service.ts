@@ -16,12 +16,15 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { ForgotPasswordInput } from './dtos/forgot-password.dto';
 import { ResetPasswordInput } from './dtos/reset-password.dto';
 import { ForgotEmailInput } from './dtos/forgot-email.dto';
+import { Sns } from './entities/sns.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly repository: Repository<User>,
+    @InjectRepository(Sns)
+    private readonly snsRepository: Repository<Sns>,
     private readonly jwtService: JwtService,
     private readonly mailerService: MailerService,
   ) {}

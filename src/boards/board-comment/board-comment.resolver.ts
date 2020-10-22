@@ -2,9 +2,9 @@ import {
   Args,
   Context,
   Mutation,
-  ResolveProperty,
+  Parent,
+  ResolveField,
   Resolver,
-  Root,
 } from '@nestjs/graphql';
 import { User } from '../../auth/entities/user.entitiy';
 import { UseGuards } from '@nestjs/common';
@@ -44,8 +44,8 @@ export class BoardCommentResolver {
     );
   }
 
-  @ResolveProperty('user')
-  async user(@Root() comment: BoardComment, @Context() ctx: IGraphQLContext) {
+  @ResolveField('user', returns => User)
+  async getUser(@Parent() comment: BoardComment, @Context() ctx: IGraphQLContext) {
     return await ctx.userLoader.load(comment.userId);
   }
 }

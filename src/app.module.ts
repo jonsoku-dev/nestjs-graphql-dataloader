@@ -18,6 +18,7 @@ import { BoardLikeLoader } from './loaders/boards/board-like.loader';
 import { BoardCommentLoader } from './loaders/boards/board-comment.loader';
 import { UserLoader } from './loaders/boards/user.loader';
 import { NoticeModule } from './notices/notice/notice.module';
+import { SnsLoader } from './loaders/sns.loader';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { NoticeModule } from './notices/notice/notice.module';
         userLoader: UserLoader(),
         boardLikeLoader: BoardLikeLoader(),
         boardCommentLoader: BoardCommentLoader(),
+        snsLoader: SnsLoader(),
       }),
       debug: false,
       cors: {

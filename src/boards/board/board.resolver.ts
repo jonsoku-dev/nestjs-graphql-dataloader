@@ -2,10 +2,10 @@ import {
   Args,
   Context,
   Mutation,
+  Parent,
   Query,
-  ResolveProperty,
+  ResolveField,
   Resolver,
-  Root,
 } from '@nestjs/graphql';
 import { CreateBoardInput } from './dtos/create-board.dto';
 import {
@@ -21,6 +21,8 @@ import { Board } from './entities/board.entity';
 import { UpdateBoardInput } from './dtos/update-board.dto';
 import { DeleteBoardArgs } from './dtos/delete-board.dto';
 import { IGraphQLContext } from '../../types/graphql.types';
+import { BoardLike } from '../board-like/entities/board-like.entitiy';
+import { BoardComment } from '../board-comment/entities/board-comment.entity';
 
 @Resolver(() => Board)
 export class BoardResolver {
@@ -65,18 +67,18 @@ export class BoardResolver {
     return this.boardService.deleteBoard(deleteBoardArgs, user);
   }
 
-  @ResolveProperty('user')
-  async user(@Root() board: Board, @Context() ctx: IGraphQLContext) {
+  @ResolveField('user', (returns) => User)
+  async getUser(@Parent() board: Board, @Context() ctx: IGraphQLContext) {
     return await ctx.userLoader.load(board.userId);
   }
 
-  @ResolveProperty('likes')
-  async likes(@Root() board: Board, @Context() ctx: IGraphQLContext) {
+  @ResolveField('likes', (returns) => [BoardLike])
+  async getLikes(@Parent() board: Board, @Context() ctx: IGraphQLContext) {
     return await ctx.boardLikeLoader.load(board.id);
   }
 
-  @ResolveProperty('comments')
-  async comments(@Root() board: Board, @Context() ctx: IGraphQLContext) {
+  @ResolveField('comments', (returns) => [BoardComment])
+  async getComments(@Parent() board: Board, @Context() ctx: IGraphQLContext) {
     return await ctx.boardCommentLoader.load(board.id);
   }
 }

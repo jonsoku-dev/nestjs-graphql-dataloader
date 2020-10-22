@@ -1,14 +1,13 @@
 import * as DataLoader from 'dataloader';
 import { getRepository } from 'typeorm';
-import { Board } from '../../boards/board/entities/board.entity';
+import { BoardComment } from '../../boards/board-comment/entities/board-comment.entity';
 
 export const BoardCommentLoader = () =>
   new DataLoader(async (keys: string[]) => {
-    const boards = await getRepository(Board)
-      .createQueryBuilder('board')
-      .leftJoinAndSelect('board.comments', 'comments')
-      .where('board.id IN (:...keys)', { keys })
+    const comments = await getRepository(BoardComment)
+      .createQueryBuilder()
+      .where('boardId IN (:...keys)', { keys })
       .getMany();
 
-    return boards.map((board) => board.comments);
+    return keys.map((key) => comments.filter((c) => c.boardId === key));
   });
