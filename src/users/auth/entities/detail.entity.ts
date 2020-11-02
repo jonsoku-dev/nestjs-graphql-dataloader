@@ -6,50 +6,35 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { IsOptional, IsString, Max } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, Max } from 'class-validator';
 import { User } from './user.entitiy';
 
 @InputType({ isAbstract: true })
 @ObjectType({ isAbstract: true })
 @Entity()
-export class Sns {
+export class Detail {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: string;
 
-  @Field(() => String)
-  @IsString()
-  @IsOptional()
-  @Column({ length: 30 })
-  facebook: string;
+  @Field(() => Boolean, { defaultValue: false })
+  @IsBoolean()
+  @Column({ default: false })
+  status: boolean;
 
   @Field(() => String)
   @IsString()
   @IsOptional()
   @Max(30)
   @Column({ length: 30 })
-  line: string;
+  company: string;
 
   @Field(() => String)
   @IsString()
   @IsOptional()
-  @Max(30)
-  @Column({ length: 30 })
-  kakaotalk: string;
-
-  @Field(() => String)
-  @IsString()
-  @IsOptional()
-  @Max(30)
-  @Column({ length: 30 })
-  twitter: string;
-
-  @Field(() => String)
-  @IsString()
-  @IsOptional()
-  @Max(30)
-  @Column({ length: 30 })
-  instagram: string;
+  @Max(1000)
+  @Column({ length: 1000 })
+  introduce: string;
 
   @Field(() => String)
   @Column()

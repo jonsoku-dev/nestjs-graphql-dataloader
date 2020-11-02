@@ -1,19 +1,14 @@
-import {
-  Field,
-  InputType,
-  Int,
-  ObjectType,
-  registerEnumType,
-} from '@nestjs/graphql';
+import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { CoreEntity } from '../../../common/entities/core.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm/index';
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { JoinColumn } from 'typeorm';
-import { User } from '../../../auth/entities/user.entitiy';
+import { User } from '../../../users/auth/entities/user.entitiy';
 import { BoardLike } from '../../board-like/entities/board-like.entitiy';
 import { BoardComment } from '../../board-comment/entities/board-comment.entity';
 
 export enum BoardCategory {
+  ALL,
   FREE,
   FQ,
   JOB,
@@ -42,6 +37,12 @@ export class Board extends CoreEntity {
   @IsEnum(BoardCategory)
   @Column()
   category: BoardCategory;
+
+  @Field((type) => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  @Column({ nullable: true })
+  imageUrl: string;
 
   @Field(() => String)
   @Column()

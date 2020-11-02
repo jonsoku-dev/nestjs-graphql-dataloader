@@ -10,16 +10,25 @@ import { Board } from './entities/board.entity';
 import { Repository } from 'typeorm/index';
 import { CreateBoardInput } from './dtos/create-board.dto';
 import { GetBoardListFilter } from './dtos/get-board-list.dto';
-import { User } from '../../auth/entities/user.entitiy';
+import { User } from '../../users/auth/entities/user.entitiy';
 import { UpdateBoardInput } from './dtos/update-board.dto';
 import { DeleteBoardArgs } from './dtos/delete-board.dto';
+import { FileUpload } from 'graphql-upload';
+import { join } from 'path';
+import { UploadFileService } from '../../common/services/upload-file.service';
 
 @Injectable()
-export class BoardService {
+export class BoardService extends UploadFileService<Board> {
   constructor(
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
-  ) {}
+  ) {
+    super(boardRepository);
+  }
+
+  async uploadImage(targetId: string, file: FileUpload): Promise<string> {
+    return super.uploadImage(targetId, file);
+  }
 
   async getBoardList({ after, first, keyword, category }: GetBoardListFilter) {
     try {
@@ -38,6 +47,7 @@ export class BoardService {
         });
       }
       if (category) {
+        console.log(category);
         query.andWhere('board.category = :category', { category });
       }
 
@@ -47,7 +57,14 @@ export class BoardService {
         .getMany();
 
       if (boardList.length === 0) {
-        throw new NotFoundException();
+        return {
+          edges: [],
+          pageInfo: {
+            hasNextPage: null,
+            startCursor: null,
+            endCursor: null,
+          },
+        };
       } else {
         const hasNextPage = boardList.length > limit;
         boardList = hasNextPage ? boardList.slice(0, -1) : boardList;
@@ -166,4 +183,36 @@ export class BoardService {
       throw new HttpException(e.response, e.status);
     }
   }
+
+  // async uploadImage(
+  //   boardId: string,
+  //   { mimetype, createReadStream }: FileUpload,
+  // ) {
+  //   try {
+  //     if (existsSync(join(this.basePath, boardId))) {
+  //       await del(join(this.basePath, boardId));
+  //     }
+  //     mkdirSync(join(this.basePath, boardId));
+  //     const changedName = `${boardId}_${dayjs().unix()}.${
+  //       mimetype.split('/')[1]
+  //     }`;
+  //     await createReadStream().pipe(
+  //       createWriteStream(join(this.basePath, boardId, changedName)),
+  //     );
+  //     return changedName;
+  //   } catch (e) {
+  //     console.error(e);
+  //     throw new HttpException(e.message, e.status);
+  //   }
+  // }
+
+  private readonly basePath = join(
+    __dirname,
+    '..',
+    '..',
+    '..',
+    'public',
+    'images',
+    'board',
+  );
 }

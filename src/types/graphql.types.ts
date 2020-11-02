@@ -2,8 +2,10 @@ import { Request, Response } from 'express';
 import * as DataLoader from 'dataloader';
 import { BoardLike } from '../boards/board-like/entities/board-like.entitiy';
 import { BoardComment } from '../boards/board-comment/entities/board-comment.entity';
-import { User } from '../auth/entities/user.entitiy';
-import { Sns } from '../auth/entities/sns.entity';
+import { User } from '../users/auth/entities/user.entitiy';
+import { Sns } from '../users/auth/entities/sns.entity';
+import { Detail } from '../users/auth/entities/detail.entity';
+import { UserSubscription } from '../users/user-subscription/user-subscription.entity';
 
 export interface IGraphQLContext {
   req: Request;
@@ -11,5 +13,8 @@ export interface IGraphQLContext {
   boardLikeLoader: DataLoader<string, BoardLike[]>;
   boardCommentLoader: DataLoader<string, BoardComment[]>;
   userLoader: DataLoader<string, User[]>;
-  snsLoader: DataLoader<string, Sns[]>
+  snsLoader: DataLoader<string, Sns[]>;
+  detailLoader: DataLoader<string, Detail[]>;
+  subscriberLoader: DataLoader<string, UserSubscription[]>;
+  subscribedToLoader: DataLoader<string, UserSubscription[]>;
 }

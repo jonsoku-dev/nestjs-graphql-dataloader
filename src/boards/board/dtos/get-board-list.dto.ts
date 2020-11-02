@@ -1,9 +1,9 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { ArgsType, Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { Board, BoardCategory } from '../entities/board.entity';
 import { CursorPagination } from '../../../common/dtos/CursorPagination.dto';
 
-@InputType()
+@ArgsType()
 export class GetBoardListFilter {
   @Field(() => String, { nullable: true })
   @IsOptional()

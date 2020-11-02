@@ -1,9 +1,9 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { ArgsType, Field, ObjectType } from '@nestjs/graphql';
 import { IsOptional, IsString } from 'class-validator';
 import { CursorPagination } from '../../../common/dtos/CursorPagination.dto';
 import { Notice } from '../notice.entitiy';
 
-@InputType()
+@ArgsType()
 export class GetNoticeListFilter {
   @Field(() => String, { nullable: true })
   @IsOptional()

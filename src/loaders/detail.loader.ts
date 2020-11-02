@@ -1,12 +1,12 @@
 import * as DataLoader from 'dataloader';
 import { getRepository } from 'typeorm';
-import { Sns } from '../users/auth/entities/sns.entity';
+import { Detail } from '../users/auth/entities/detail.entity';
 
-export const SnsLoader = () =>
+export const DetailLoader = () =>
   new DataLoader(async (keys: string[]) => {
-    const results = await getRepository(Sns)
-      .createQueryBuilder('sns')
-      .where('sns.id IN (:...keys)', { keys })
+    const results = await getRepository(Detail)
+      .createQueryBuilder('detail')
+      .where('detail.id IN (:...keys)', { keys })
       .getMany();
     return keys.map((key) => results.find((result) => result.userId === key));
   });

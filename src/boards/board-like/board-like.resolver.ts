@@ -6,11 +6,11 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { User } from '../../auth/entities/user.entitiy';
+import { User } from '../../users/auth/entities/user.entitiy';
 import { BoardLike } from './entities/board-like.entitiy';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '../../auth/gql-auth.guard';
-import { CurrentUser } from '../../auth/current-user.decorator';
+import { GqlAuthGuard } from '../../users/auth/gql-auth.guard';
+import { CurrentUser } from '../../users/auth/current-user.decorator';
 import { LikeArgs } from './dtos/like.dto';
 import { BoardLikeService } from './board-like.service';
 import { IGraphQLContext } from '../../types/graphql.types';

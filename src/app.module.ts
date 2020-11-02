@@ -1,11 +1,11 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { CacheModule, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { CommonModule } from './common/common.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './users/auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -19,6 +19,12 @@ import { BoardCommentLoader } from './loaders/boards/board-comment.loader';
 import { UserLoader } from './loaders/boards/user.loader';
 import { NoticeModule } from './notices/notice/notice.module';
 import { SnsLoader } from './loaders/sns.loader';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { DetailLoader } from './loaders/detail.loader';
+import { SubscriberLoader } from './loaders/subscriber.loader';
+import { SubscribedToLoader } from './loaders/subscribedTo.loader';
+import { UserSubscriptionModule } from './users/user-subscription/user-subscription.module';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 
 @Module({
   imports: [
@@ -35,6 +41,9 @@ import { SnsLoader } from './loaders/sns.loader';
         MYSQL_PORT: Joi.number().required().default(3307),
         PORT: Joi.number().required().default(5000),
       }),
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
     }),
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
@@ -69,11 +78,14 @@ import { SnsLoader } from './loaders/sns.loader';
         boardLikeLoader: BoardLikeLoader(),
         boardCommentLoader: BoardCommentLoader(),
         snsLoader: SnsLoader(),
+        detailLoader: DetailLoader(),
+        subscriberLoader: SubscriberLoader(),
+        subscribedToLoader: SubscribedToLoader(),
       }),
       debug: false,
       cors: {
+        origin: 'http://localhost:3000',
         credentials: true,
-        origin: true,
       },
     }),
     MailerModule.forRootAsync({
@@ -101,6 +113,7 @@ import { SnsLoader } from './loaders/sns.loader';
     }),
     CommonModule,
     AuthModule,
+    UserSubscriptionModule,
     BoardModule,
     BoardCommentModule,
     BoardLikeModule,
@@ -114,4 +127,8 @@ import { SnsLoader } from './loaders/sns.loader';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

@@ -11,7 +11,7 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { CoreEntity } from '../../common/entities/core.entity';
+import { CoreEntity } from '../../../common/entities/core.entity';
 import {
   IsEmail,
   IsEnum,
@@ -24,12 +24,14 @@ import {
 import * as bcrypt from 'bcryptjs';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Exclude } from 'class-transformer';
-import { Board } from '../../boards/board/entities/board.entity';
-import { BoardLike } from '../../boards/board-like/entities/board-like.entitiy';
-import { BoardComment } from '../../boards/board-comment/entities/board-comment.entity';
-import { Notice } from '../../notices/notice/notice.entitiy';
+import { Board } from '../../../boards/board/entities/board.entity';
+import { BoardLike } from '../../../boards/board-like/entities/board-like.entitiy';
+import { BoardComment } from '../../../boards/board-comment/entities/board-comment.entity';
+import { Notice } from '../../../notices/notice/notice.entitiy';
 import { JoinColumn, OneToOne } from 'typeorm';
 import { Sns } from './sns.entity';
+import { Detail } from './detail.entity';
+import { UserSubscription } from '../../user-subscription/user-subscription.entity';
 
 export enum UserRole {
   Client,
@@ -81,6 +83,10 @@ export class User extends CoreEntity {
   @OneToOne((type) => Sns, (sns) => sns.user)
   sns: Sns;
 
+  @Field(() => Detail, { nullable: true })
+  @OneToOne((type) => Detail, (detail) => detail.user)
+  detail: Detail;
+
   @OneToMany((type) => Board, (board) => board.user)
   boards: Board[];
   @OneToMany((type) => BoardLike, (like) => like.user)
@@ -89,6 +95,12 @@ export class User extends CoreEntity {
   comments: BoardComment[];
   @OneToMany((type) => Notice, (notice) => notice.user)
   notices: Notice[];
+  @Field(() => [UserSubscription], { nullable: true })
+  @OneToMany(type => UserSubscription, subscription => subscription.subscriber)
+  subscriptions: UserSubscription[];
+  @Field(() => [UserSubscription], { nullable: true })
+  @OneToMany(type => UserSubscription, subscription => subscription.subscribedTo)
+  subscribers: UserSubscription[];
 
   @BeforeInsert()
   @BeforeUpdate()

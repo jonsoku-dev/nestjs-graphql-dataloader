@@ -13,9 +13,9 @@ import {
   GetBoardListOutput,
 } from './dtos/get-board-list.dto';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '../../auth/gql-auth.guard';
-import { CurrentUser } from '../../auth/current-user.decorator';
-import { User } from '../../auth/entities/user.entitiy';
+import { GqlAuthGuard } from '../../users/auth/gql-auth.guard';
+import { CurrentUser } from '../../users/auth/current-user.decorator';
+import { User } from '../../users/auth/entities/user.entitiy';
 import { BoardService } from './board.service';
 import { Board } from './entities/board.entity';
 import { UpdateBoardInput } from './dtos/update-board.dto';
@@ -23,15 +23,19 @@ import { DeleteBoardArgs } from './dtos/delete-board.dto';
 import { IGraphQLContext } from '../../types/graphql.types';
 import { BoardLike } from '../board-like/entities/board-like.entitiy';
 import { BoardComment } from '../board-comment/entities/board-comment.entity';
+import { FileUpload } from 'graphql-upload';
+import { GraphQLUpload } from 'apollo-server-express';
 
 @Resolver(() => Board)
 export class BoardResolver {
-  constructor(private readonly boardService: BoardService) {}
+  constructor(private readonly boardService: BoardService) {
+  }
 
   @Query(() => GetBoardListOutput)
   getBoardList(
-    @Args('filter', { nullable: true }) getBoardListFilter: GetBoardListFilter,
+    @Args() getBoardListFilter: GetBoardListFilter,
   ): Promise<GetBoardListOutput> {
+    console.log(getBoardListFilter.category === 0);
     return this.boardService.getBoardList(getBoardListFilter);
   }
 
@@ -65,6 +69,15 @@ export class BoardResolver {
     @CurrentUser() user: User,
   ) {
     return this.boardService.deleteBoard(deleteBoardArgs, user);
+  }
+
+  @Mutation(() => String)
+  uploadBoardImage(
+    @Args('boardId') boardId: string,
+    @Args({ name: 'file', type: () => GraphQLUpload })
+      file: FileUpload,
+  ) {
+    return this.boardService.uploadImage(boardId, file);
   }
 
   @ResolveField('user', (returns) => User)

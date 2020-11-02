@@ -8,16 +8,24 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Notice } from './notice.entitiy';
 import { Repository } from 'typeorm';
 import { CreateNoticeInput } from './dtos/create-notice.dto';
-import { User } from '../../auth/entities/user.entitiy';
+import { User } from '../../users/auth/entities/user.entitiy';
 import { GetNoticeListFilter } from './dtos/get-notice-list.dto';
 import { UpdateNoticeInput } from './dtos/update-notice.dto';
+import { UploadFileService } from '../../common/services/upload-file.service';
+import { FileUpload } from 'graphql-upload';
 
 @Injectable()
-export class NoticeService {
+export class NoticeService extends UploadFileService<Notice> {
   constructor(
     @InjectRepository(Notice)
     private readonly noticeRepository: Repository<Notice>,
-  ) {}
+  ) {
+    super(noticeRepository);
+  }
+
+  async uploadImage(targetId: string, file: FileUpload): Promise<string> {
+    return super.uploadImage(targetId, file);
+  }
 
   async createNotice(createNoticeInput: CreateNoticeInput, user: User) {
     try {
@@ -77,7 +85,14 @@ export class NoticeService {
         .getMany();
 
       if (noticeList.length === 0) {
-        throw new NotFoundException();
+        return {
+          edges: [],
+          pageInfo: {
+            hasNextPage: null,
+            startCursor: null,
+            endCursor: null,
+          },
+        };
       } else {
         const hasNextPage = noticeList.length > limit;
         noticeList = hasNextPage ? noticeList.slice(0, -1) : noticeList;

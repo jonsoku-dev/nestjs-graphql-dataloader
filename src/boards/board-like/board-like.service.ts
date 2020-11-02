@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { LikeArgs } from './dtos/like.dto';
-import { User } from '../../auth/entities/user.entitiy';
+import { User } from '../../users/auth/entities/user.entitiy';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BoardLike } from './entities/board-like.entitiy';
 import { Repository } from 'typeorm';

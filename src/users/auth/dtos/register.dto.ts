@@ -14,3 +14,11 @@ export class RegisterInput extends PickType(User, [
   @Length(4, 255)
   password: string;
 }
+
+@InputType()
+export class GoogleRegisterInput {
+  @Field((type) => String)
+  @IsString()
+  @IsNotEmpty()
+  tokenId: string;
+}

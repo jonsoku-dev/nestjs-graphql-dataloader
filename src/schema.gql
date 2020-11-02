@@ -8,6 +8,7 @@ type Board {
   createdAt: DateTime!
   description: String!
   id: ID!
+  imageUrl: String
   likes: [BoardLike!]!
   title: String!
   updatedAt: DateTime!
@@ -16,6 +17,7 @@ type Board {
 }
 
 enum BoardCategory {
+  ALL
   FQ
   FREE
   JOB
@@ -65,16 +67,39 @@ input CreateBoardInput {
   title: String!
 }
 
+input CreateDetailInput {
+  company: String!
+  introduce: String!
+  status: Boolean = false
+}
+
 input CreateNoticeInput {
   description: String!
   imageUrl: String
   title: String!
 }
 
+input CreateSnsInput {
+  facebook: String
+  instagram: String
+  kakaotalk: String
+  line: String
+  twitter: String
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Detail {
+  company: String!
+  id: ID!
+  introduce: String!
+  status: Boolean!
+  user: User!
+  userId: String!
+}
 
 input ForgotEmailInput {
   username: String!
@@ -85,27 +110,22 @@ input ForgotPasswordInput {
   password: String!
 }
 
-input GetBoardListFilter {
-  after: String
-  category: BoardCategory
-  first: String
-  keyword: String
-}
-
 type GetBoardListOutput {
   edges: [BoardEdge!]
   pageInfo: BoardPageInfo
 }
 
-input GetNoticeListFilter {
-  after: String
-  first: String
-  keyword: String
-}
-
 type GetNoticeListOutput {
   edges: [NoticeEdge!]
   pageInfo: NoticePageInfo
+}
+
+input GoogleLoginInput {
+  tokenId: String!
+}
+
+input GoogleRegisterInput {
+  tokenId: String!
 }
 
 input LoginInput {
@@ -120,19 +140,30 @@ type LoginOutput {
 type Mutation {
   createBoard(input: CreateBoardInput!): Board!
   createBoardComment(input: CreateBoardCommentInput!): BoardComment!
+  createDetail(input: CreateDetailInput!): String!
   createNotice(input: CreateNoticeInput!): Notice!
+  createSns(input: CreateSnsInput!): String!
   deleteBoard(boardId: String!): String!
   deleteNotice(noticeId: String!): Notice!
   forgotEmail(input: ForgotEmailInput!): User!
   forgotPassword(input: ForgotPasswordInput!): String!
+  googleLogin(input: GoogleLoginInput!): LoginOutput!
+  googleRegister(input: GoogleRegisterInput!): User!
   like(boardId: String!): String!
+  localLogin(input: LoginInput!): User!
   login(input: LoginInput!): LoginOutput!
   register(input: RegisterInput!): User!
   resetPassword(input: ResetPasswordInput!): User!
+  subscribe(targetUserId: String!): UserSubscription!
   unlike(boardId: String!): String!
+  unsubscribe(targetUserId: String!): String!
   updateBoard(input: UpdateBoardInput!): Board!
   updateBoardComment(input: UpdateBoardCommentInput!): BoardComment!
+  updateDetail(input: UpdateDetailInput!): String!
   updateNotice(input: UpdateNoticeInput!): Notice!
+  updateSns(input: UpdateSnsInput!): String!
+  uploadBoardImage(boardId: String!, file: Upload!): String!
+  uploadNoticeImage(file: Upload!, noticeId: String!): String!
 }
 
 type Notice {
@@ -160,9 +191,9 @@ type NoticePageInfo {
 type Query {
   findUser(userId: String!): User!
   getBoard(boardId: String!): Board!
-  getBoardList(filter: GetBoardListFilter): GetBoardListOutput!
+  getBoardList(after: String, category: BoardCategory, first: String, keyword: String): GetBoardListOutput!
   getNotice(noticeId: String!): Notice!
-  getNoticeList(filter: GetNoticeListFilter): GetNoticeListOutput!
+  getNoticeList(after: String, first: String, keyword: String): GetNoticeListOutput!
   me: User!
   test: Boolean!
 }
@@ -180,12 +211,12 @@ input ResetPasswordInput {
 }
 
 type Sns {
-  facebook: String!
+  facebook: String
   id: ID!
-  instagram: String!
-  kakaotalk: String!
-  line: String!
-  twitter: String!
+  instagram: String
+  kakaotalk: String
+  line: String
+  twitter: String
   user: User!
   userId: String!
 }
@@ -203,6 +234,12 @@ input UpdateBoardInput {
   title: String
 }
 
+input UpdateDetailInput {
+  company: String
+  introduce: String
+  status: Boolean = false
+}
+
 input UpdateNoticeInput {
   description: String
   imageUrl: String
@@ -210,13 +247,27 @@ input UpdateNoticeInput {
   title: String
 }
 
+input UpdateSnsInput {
+  facebook: String
+  instagram: String
+  kakaotalk: String
+  line: String
+  twitter: String
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
 type User {
   confirmCode: Float
   createdAt: DateTime!
+  detail: Detail
   email: String!
   id: String!
   role: UserRole!
   sns: Sns
+  subscribers: [UserSubscription!]
+  subscriptions: [UserSubscription!]
   updatedAt: DateTime!
   username: String!
 }
@@ -224,4 +275,14 @@ type User {
 enum UserRole {
   Admin
   Client
+}
+
+type UserSubscription {
+  createdAt: DateTime!
+  id: ID!
+  subscribedTo: User!
+  subscribedToId: String!
+  subscriber: User!
+  subscriberId: String!
+  updatedAt: DateTime!
 }

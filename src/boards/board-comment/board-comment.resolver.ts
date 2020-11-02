@@ -6,11 +6,11 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { User } from '../../auth/entities/user.entitiy';
+import { User } from '../../users/auth/entities/user.entitiy';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '../../auth/gql-auth.guard';
+import { GqlAuthGuard } from '../../users/auth/gql-auth.guard';
 import { CreateBoardCommentInput } from './dtos/create-board-comment.dto';
-import { CurrentUser } from '../../auth/current-user.decorator';
+import { CurrentUser } from '../../users/auth/current-user.decorator';
 import { UpdateBoardCommentInput } from './dtos/update-board-comment.dto';
 import { BoardCommentService } from './board-comment.service';
 import { BoardComment } from './entities/board-comment.entity';
